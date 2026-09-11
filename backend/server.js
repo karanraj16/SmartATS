@@ -10,9 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 // 🌟 NEW FIX: Serve the test.html directly from localhost
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/test.html');
-});
+app.get('/', (req, res) => res.send('SmartATS Backend is Running successfully! 🚀'));
 
 // Routes
 app.use('/api/resume', resumeRoutes);

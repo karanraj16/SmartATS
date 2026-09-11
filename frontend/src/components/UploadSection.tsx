@@ -25,7 +25,7 @@ export default function UploadSection({ jobDescription, setJobDescription, files
     files.forEach(file => formData.append('resumes', file)); // Puthu Backend format
 
     try {
-      const response = await axios.post('http://localhost:5000/api/resume/analyze', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      const response = await axios.post('https://smartats-7axu.onrender.com/api/resume/analyze', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       onAnalyzeSuccess(response.data.data);
     } catch (err: any) { setError(err.response?.data?.error || 'Server connection failed!'); } 
     finally { setLoading(false); }

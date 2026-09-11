@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>SmartATS API Tester</title>
+</head>
+
+<body style="font-family: Arial; padding: 20px;">
+    <h2>🚀 SmartATS AI Tester</h2>
+
+    <label>1. Upload PDF Resume:</label><br>
+    <input type="file" id="resume" accept=".pdf"><br><br>
+
+    <label>2. Paste Job Description:</label><br>
+    <textarea id="jd" rows="5" cols="50" placeholder="Paste JD here..."></textarea><br><br>
+
+    <button onclick="testAPI()" style="padding: 10px; background: blue; color: white;">Analyze with AI</button>
+
+    <h3>AI Response:</h3>
+    <pre id="result" style="background: #eee; padding: 10px;"></pre>
+
+    <script>
+        async function testAPI() {
+            const fileInput = document.getElementById('resume');
+            const jdInput = document.getElementById('jd');
+            const resultBox = document.getElementById('result');
+
+            if (!fileInput.files[0] || !jdInput.value) {
+                alert("Please upload a PDF and paste a JD!");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("resume", fileInput.files[0]);
+            formData.append("jobDescription", jdInput.value);
+
+            resultBox.innerText = "⏳ Gemini AI is analyzing... Please wait...";
+
+            try {
+                const response = await fetch("http://localhost:5000/api/resume/analyze", {
+                    method: "POST",
+                    body: formData
+                });
+                const data = await response.json();
+                resultBox.innerText = JSON.stringify(data, null, 2);
+            } catch (err) {
+                resultBox.innerText = "Error: " + err.message;
+            }
+        }
+    </script>
+</body>
+
+</html>

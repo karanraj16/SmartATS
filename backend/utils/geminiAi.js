@@ -55,13 +55,12 @@ const analyzeResume = async (resumeContent, jobDescription) => {
             return JSON.parse(responseText);
             
         } catch (error) {
-            // Error 503 (Server Busy) aaga irunthal mattum wait panni retry pannum
-            if (error.message.includes('503') && retries > 1) {
-                console.log(`⚠️ Google API High Demand (503). Retrying in 3 seconds... (${retries - 1} attempts left)`);
-                await sleep(3000); // 3 seconds wait
+            // Error 503 (Server Busy) illana 429 (Quota limit) vanthaal wait pannum
+            if ((error.message.includes('503') || error.message.includes('429')) && retries > 1) {
+                console.log(`⚠️ Google API Limit (429/503). Retrying in 15 seconds... (${retries - 1} left)`);
+                await sleep(15000); // 429 error vantha 15 seconds long wait pannanum
                 retries--;
             } else {
-                // Vera yethavathu error na direct-a fail aagidum
                 throw error; 
             }
         }

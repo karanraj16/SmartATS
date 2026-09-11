@@ -1,6 +1,9 @@
 const { analyzeResume } = require('../utils/geminiAi');
 const mammoth = require('mammoth');
 
+// 🔥 MAATRAM 1: Intha Delay function-a top-la add pannanum
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 const uploadAndAnalyze = async (req, res) => {
     try {
         if (!req.files || req.files.length === 0) return res.status(400).json({ error: 'Please upload at least one resume' });
@@ -10,6 +13,7 @@ const uploadAndAnalyze = async (req, res) => {
         console.log(`🚀 Processing ${req.files.length} resumes for Leaderboard...`);
 
         for (const file of req.files) {
+            console.log(`📍 2. Sending ${file.originalname} to Gemini AI...`);
             let resumeContent;
             const fileName = file.originalname.toLowerCase();
 
@@ -35,17 +39,26 @@ const uploadAndAnalyze = async (req, res) => {
                 allResults.push(aiAnalysis);
                 console.log(`✅ Successfully analyzed: ${file.originalname}`);
             } catch (error) {
+                // Console-layum print aagum
+                console.log("Exact Error Details:", error);
                 console.error(`❌ AI Error for ${file.originalname}:`, error.message);
+                
                 allResults.push({
                     filename: file.originalname,
                     match_percentage: 0,
                     matched_keywords: [],
                     missing_keywords: [],
                     important_jd_keywords: [],
-                    short_summary: "AI failed to analyze this specific file. Ensure it's a readable text PDF.",
-                    ats_readability: { score: 0, feedback: "Unreadable format." },
-                    cover_letter: "Error generating cover letter."
+                    short_summary: `System Failure: ${error.message}`, 
+                    ats_readability: { score: 0, feedback: "Unreadable format or API blocked." },
+                    cover_letter: "Error generating cover letter.please wait"
                 });
+            }
+
+            // 🔥 MAATRAM 2: Oru resume mudinjathum, adutha resume anuppa 3 second wait pannum
+            if (req.files.length > 1) {
+                console.log("⏳ Waiting 3 seconds to avoid Google API 429 Error...");
+                await sleep(10000); 
             }
         }
 
